@@ -1,7 +1,6 @@
 from logging import getLogger
 from typing import Any, Dict, List, NamedTuple, Optional, Set, Tuple
 
-from django.conf import settings
 from django.db import IntegrityError
 from django.utils import timezone
 
@@ -11,7 +10,7 @@ from packaging.version import Version
 from redis import Redis
 from web3.exceptions import BadFunctionCallOutput
 
-from gnosis.eth import EthereumClient, EthereumClientProvider, InvalidNonce
+from gnosis.eth import EthereumClient, EthereumClientProvider, InvalidNonce, TxSpeed
 from gnosis.eth.constants import NULL_ADDRESS
 from gnosis.safe import ProxyFactory, Safe
 from gnosis.safe.exceptions import InvalidMultisigTx, SafeServiceException
@@ -204,21 +203,13 @@ class TransactionService:
 
         minimum_accepted_gas_price = self._get_minimum_gas_price()
 
-        if gas_token and gas_token != NULL_ADDRESS:
-            estimated_gas_price = self._estimate_tx_gas_price(
-                self._get_minimum_gas_price(), gas_token=gas_token
+        estimated_gas_price = self._estimate_tx_gas_price(
+            minimum_accepted_gas_price, gas_token
+        )
+        if safe_gas_price < estimated_gas_price:
+            raise GasPriceTooLow(
+                "Required gas-price>=%d to use gas-token" % estimated_gas_price
             )
-            if safe_gas_price < estimated_gas_price:
-                raise GasPriceTooLow(
-                    "Required gas-price>=%d to use gas-token" % estimated_gas_price
-                )
-            # We use gas station tx gas price. We cannot use internal tx's because is calculated
-            # based on the gas token
-        else:
-            if safe_gas_price < minimum_accepted_gas_price:
-                raise GasPriceTooLow(
-                    "Required gas-price>=%d" % minimum_accepted_gas_price
-                )
         return True
 
     def _estimate_tx_gas_price(
@@ -637,6 +628,7 @@ class TransactionService:
                 tx_gas_price=tx_gas_price,
                 tx_nonce=tx_nonce,
                 block_identifier=block_identifier,
+                eip1559_speed=TxSpeed.NORMAL,
             )
             logger.info(
                 "Safe=%s, Sent transaction with nonce=%d tx-hash=%s for safe-tx-hash=%s safe-nonce=%d",
@@ -732,6 +724,7 @@ class TransactionService:
                 tx_gas=tx_gas,
                 tx_gas_price=gas_price,
                 tx_nonce=multisig_tx.ethereum_tx.nonce,
+                eip1559_speed=TxSpeed.NORMAL,
             )
             logger.info(
                 "Tx with old tx-hash %s was resent with a new tx-hash %s",
@@ -751,6 +744,7 @@ class TransactionService:
                     tx_gas=tx_gas,
                     tx_gas_price=gas_price,
                     tx_nonce=tx_nonce,
+                    eip1559_speed=TxSpeed.NORMAL,
                 )
                 logger.error(
                     "Nonce problem, sending transaction for Safe %s with a new nonce %d and tx-hash %s",

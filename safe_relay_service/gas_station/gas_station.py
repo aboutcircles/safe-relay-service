@@ -115,7 +115,7 @@ class GasStation:
         return gas_prices
 
     def calculate_gas_prices(self) -> GasPrice:
-        current_block_number = self.w3.eth.blockNumber
+        current_block_number = self.w3.eth.block_number
         block_numbers = range(
             current_block_number - self.number_of_blocks, current_block_number
         )
@@ -176,12 +176,11 @@ class GasStationMock(GasStation):
             self.fast = Web3.toWei(20, "gwei")
             self.fastest = Web3.toWei(50, "gwei")
         else:
-            # Set all gas prices to the same (for running on xDai)
             self.lowest = Web3.toWei(gas_price, "gwei")
-            self.safe_low = Web3.toWei(gas_price, "gwei")
-            self.standard = Web3.toWei(gas_price, "gwei")
-            self.fast = Web3.toWei(gas_price, "gwei")
-            self.fastest = Web3.toWei(gas_price, "gwei")
+            self.safe_low = Web3.toWei(gas_price + 1, "gwei")
+            self.standard = Web3.toWei(gas_price + 2, "gwei")
+            self.fast = Web3.toWei(gas_price + 3, "gwei")
+            self.fastest = Web3.toWei(gas_price + 4, "gwei")
 
     def calculate_gas_prices(self) -> GasPrice:
         return GasPrice(

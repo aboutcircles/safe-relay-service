@@ -4,10 +4,10 @@ from django.utils import timezone
 
 import factory.fuzzy
 from eth_account import Account
-from ethereum.utils import checksum_encode, mk_contract_address
 from factory.django import DjangoModelFactory
 from hexbytes import HexBytes
 from web3 import Web3
+from gnosis.eth.utils import mk_contract_address
 
 from gnosis.eth.constants import (
     ERC20_721_TRANSFER_TOPIC,
@@ -52,7 +52,7 @@ class SafeCreationFactory(DjangoModelFactory):
     safe = factory.SubFactory(
         SafeContractFactory,
         address=factory.LazyAttribute(
-            lambda o: checksum_encode(mk_contract_address(o.factory_parent.deployer, 0))
+            lambda o: mk_contract_address(o.factory_parent.deployer, 0)
         ),
     )
     funder = factory.LazyFunction(lambda: Account.create().address)
@@ -82,9 +82,7 @@ class SafeCreation2Factory(DjangoModelFactory):
     safe = factory.SubFactory(
         SafeContractFactory,
         address=factory.LazyAttribute(
-            lambda o: checksum_encode(
-                mk_contract_address(o.factory_parent.proxy_factory, 0)
-            )
+            lambda o: mk_contract_address(o.factory_parent.proxy_factory, 0)
         ),
     )
     master_copy = factory.LazyFunction(lambda: Account.create().address)

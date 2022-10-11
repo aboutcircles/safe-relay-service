@@ -3,8 +3,6 @@ Base settings to build other settings files upon.
 """
 
 import environ
-import socket
-
 
 ROOT_DIR = (
     environ.Path(__file__) - 3
@@ -43,20 +41,8 @@ USE_TZ = True
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-psql_url = (
-    "psql://"
-    + env("POSTGRES_USER")
-    + ":"
-    + env("POSTGRES_PASSWORD")
-    + "@"
-    + env("POSTGRES_HOST")
-    + ":"
-    + env("POSTGRES_PORT")
-    + "/"
-    + env("POSTGRES_DATABASE_RELAYER")
-)
 DATABASES = {
-    "default": env.db("DATABASE_URL", default=psql_url),
+    "default": env.db("DATABASE_URL"),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
@@ -183,7 +169,7 @@ EMAIL_BACKEND = env(
 ADMIN_URL = r"^admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [
-    ("""Circles""", "webmaster@joincircles.net"),
+    ("""Gnosis""", "dev@gnosis.pm"),
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
@@ -307,7 +293,6 @@ LOGGING = {
 
 REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
 
-
 # Ethereum
 # ------------------------------------------------------------------------------
 ETH_HASH_PREFIX = env("ETH_HASH_PREFIX", default="GNO")
@@ -319,13 +304,10 @@ GAS_STATION_NUMBER_BLOCKS = env("GAS_STATION_NUMBER_BLOCKS", default=300)
 # ------------------------------------------------------------------------------
 SAFE_FUNDER_PRIVATE_KEY = env("SAFE_FUNDER_PRIVATE_KEY", default=None)
 # Maximum ether (no wei) for a single transaction (security limit)
-
 SAFE_FUNDER_MAX_ETH = env.int("SAFE_FUNDER_MAX_ETH", default=0.1)
 SAFE_FUNDING_CONFIRMATIONS = env.int(
-    "SAFE_FUNDING_CONFIRMATIONS", default=3
+    "SAFE_FUNDING_CONFIRMATIONS", default=0
 )  # Set to at least 3
-
-
 # Master Copy Address of Safe Contract
 SAFE_CONTRACT_ADDRESS = env("SAFE_ADDRESS", default="0x" + "0" * 39 + "1")
 
@@ -347,42 +329,6 @@ SAFE_PROXY_FACTORY_V1_0_0_ADDRESS = env(
 SAFE_DEFAULT_CALLBACK_HANDLER = env(
     "SAFE_DEFAULT_CALLBACK_HANDLER", default="0x" + "0" * 39 + "3"
 )
-
-# SAFE_CONTRACT_ADDRESS = env(
-#     "SAFE_CONTRACT_ADDRESS", default="0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552"
-# )
-# SAFE_V1_1_1_CONTRACT_ADDRESS = env(
-#     "SAFE_V1_1_1_CONTRACT_ADDRESS", default="0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F"
-# )
-# SAFE_V1_0_0_CONTRACT_ADDRESS = env(
-#     "SAFE_V1_0_0_CONTRACT_ADDRESS", default="0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"
-# )
-# SAFE_V0_0_1_CONTRACT_ADDRESS = env(
-#     "SAFE_V0_0_1_CONTRACT_ADDRESS", default="0x8942595A2dC5181Df0465AF0D7be08c8f23C93af"
-# )
-# SAFE_V1_1_1_CIRCLES_CONTRACT_ADDRESS = env(
-#     "SAFE_V1_1_1__CIRCLES_CONTRACT_ADDRESS", default="0x2CB0ebc503dE87CFD8f0eCEED8197bF7850184ae"
-# )
-# SAFE_VALID_CONTRACT_ADDRESSES = set(
-#     env.list("SAFE_VALID_CONTRACT_ADDRESSES", default=["0x" + "0" * 39 + "1"])
-# ) | {SAFE_CONTRACT_ADDRESS, SAFE_V1_0_0_CONTRACT_ADDRESS, SAFE_V0_0_1_CONTRACT_ADDRESS,SAFE_V1_1_1_CIRCLES_CONTRACT_ADDRESS}
-
-# SAFE_PROXY_FACTORY_ADDRESS = env(
-#     "SAFE_PROXY_FACTORY_ADDRESS", default="0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2"
-# )
-# SAFE_PROXY_FACTORY_V1_0_0_ADDRESS = env(
-#     "SAFE_PROXY_FACTORY_V1_0_0_ADDRESS",
-#     default="0x12302fE9c02ff50939BaAaaf415fc226C078613C",
-# )
-
-# SAFE_PROXY_FACTORY_V1_0_0_ADDRESS_CIRCLES = env(
-#     "SAFE_PROXY_FACTORY_V1_0_0_ADDRESS",
-#     default="0x8b4404DE0CaECE4b966a9959f134f0eFDa636156",
-# )
-# SAFE_DEFAULT_CALLBACK_HANDLER = env(
-#     "SAFE_DEFAULT_CALLBACK_HANDLER",
-#     default="0xf48f2B2d2a534e402487b3ee7C18c33Aec0Fe5e4",
-# )
 
 # If FIXED_GAS_PRICE is None, GasStation will be used
 FIXED_GAS_PRICE = env.int("FIXED_GAS_PRICE", default=None)
@@ -408,16 +354,5 @@ TOKEN_LOGO_BASE_URI = env(
 )
 TOKEN_LOGO_EXTENSION = env("TOKEN_LOGO_EXTENSION", default=".png")
 
-
-# CIRCLES
-
-CIRCLES_HUB_ADDRESS = env("HUB_ADDRESS", default="0x" + "0" * 39 + "2")
-GRAPH_NODE_ENDPOINT = env("GRAPH_NODE_ENDPOINT", default="")
-MIN_TRUST_CONNECTIONS = env("MIN_TRUST_CONNECTIONS", default=3)
-SUBGRAPH_NAME = env("SUBGRAPH_NAME", default="")
-
-# DOCKER
-
-hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
-INTERNAL_IPS += [ip[:-1] + "1" for ip in ips]
+# Notifications
+SLACK_API_WEBHOOK = env("SLACK_API_WEBHOOK", default=None)

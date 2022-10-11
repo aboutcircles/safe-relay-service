@@ -181,87 +181,6 @@ class SafeCreationService:
                 safe_creation2.payment,
             )
 
-    def existing_predicted_address(self, salt_nonce: int, owners: Iterable[str]) -> str:
-        """
-        Return a previously predicted Safe address.
-        Note that the prediction parameters are not updated for the SafeCreation2 object
-        :param salt_nonce: Random value for solidity `create2` salt
-        :param owners: Owners of the new Safe
-        :rtype: str
-        """
-        try:
-            # The salt_nonce is deterministicly generated from the owner address
-            safe_creation = (
-                SafeCreation2.objects.filter(
-                    owners__contains=owners, salt_nonce=salt_nonce
-                )
-                .order_by("created")
-                .first()
-            )
-            if not safe_creation:
-                return NULL_ADDRESS
-            logger.info(
-                "The relayer had already predicted an address for this owner. Safe addr: %s, owner: %s",
-                safe_creation.safe_id,
-                owners,
-            )
-            return safe_creation.safe_id
-        except SafeCreation2.DoesNotExist:
-            return NULL_ADDRESS
-
-    def predict_address(
-        self,
-        salt_nonce: int,
-        owners: Iterable[str],
-        threshold: int,
-        payment_token: Optional[str],
-    ) -> str:
-        """
-        Return the predicted Safe address
-        :param salt_nonce: Random value for solidity `create2` salt
-        :param owners: Owners of the new Safe
-        :param threshold: Minimum number of users required to operate the Safe
-        :param payment_token: Address of the payment token, otherwise `ether` is used
-        :rtype: str
-        :raises: InvalidPaymentToken
-        """
-
-        payment_token = payment_token or NULL_ADDRESS
-        payment_token_eth_value = self._get_token_eth_value_or_raise(payment_token)
-        gas_price: int = self._get_configured_gas_price()
-        current_block_number = self.ethereum_client.current_block_number
-
-        logger.info(
-            "Safe.build_safe_create2_tx params: %s %s %s %s %s %s %s %s %s %s %s",
-            self.safe_contract_address,
-            self.proxy_factory.address,
-            salt_nonce,
-            owners,
-            threshold,
-            gas_price,
-            payment_token,
-            self.funder_account.address,
-            self.default_callback_handler,
-            payment_token_eth_value,
-            self.safe_fixed_creation_cost,
-        )
-
-        safe_creation_tx = Safe.build_safe_create2_tx(
-            self.ethereum_client,
-            self.safe_contract_address,
-            self.proxy_factory.address,
-            salt_nonce,
-            owners,
-            threshold,
-            gas_price,
-            payment_token,
-            payment_receiver=self.funder_account.address,
-            fallback_handler=self.default_callback_handler,
-            payment_token_eth_value=payment_token_eth_value,
-            fixed_creation_cost=self.safe_fixed_creation_cost,
-        )
-        return safe_creation_tx.safe_address
-
     def create2_safe_tx(
         self,
         salt_nonce: int,
@@ -283,6 +202,7 @@ class SafeCreationService:
         payment_token_eth_value = self._get_token_eth_value_or_raise(payment_token)
         gas_price: int = self._get_configured_gas_price()
         current_block_number = self.ethereum_client.current_block_number
+        logger.debug("Building safe create2 tx with gas price %d", gas_price)
         safe_creation_tx = Safe.build_safe_create2_tx(
             self.ethereum_client,
             self.safe_contract_address,
@@ -297,6 +217,7 @@ class SafeCreationService:
             payment_token_eth_value=payment_token_eth_value,
             fixed_creation_cost=self.safe_fixed_creation_cost,
         )
+
         safe_contract, created = SafeContract.objects.get_or_create(
             address=safe_creation_tx.safe_address,
             defaults={"master_copy": safe_creation_tx.master_copy_address},

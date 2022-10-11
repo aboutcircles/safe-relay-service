@@ -227,11 +227,13 @@ class SafeBalanceView(APIView):
     serializer_class = SafeBalanceResponseSerializer
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use tx service",
         responses={
             200: SafeBalanceResponseSerializer(many=True),
             404: "Safe not found",
             422: "Safe address checksum not valid",
-        }
+        },
     )
     def get(self, request, address, format=None):
         """
@@ -256,11 +258,13 @@ class SafeSignalView(APIView):
     permission_classes = (AllowAny,)
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use /v2/safes/{address}/funded",
         responses={
             200: SafeFundingResponseSerializer(),
             404: "Safe not found",
             422: "Safe address checksum not valid",
-        }
+        },
     )
     def get(self, request, address, format=None):
         """
@@ -304,12 +308,14 @@ class SafeMultisigTxEstimateView(CreateAPIView):
     serializer_class = SafeMultisigEstimateTxSerializer
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use /v2/safes/{address}/transactions/estimate",
         responses={
             200: SafeMultisigEstimateTxResponseSerializer(),
             400: "Data not valid",
             404: "Safe not found",
             422: "Safe address checksum not valid/Tx not valid",
-        }
+        },
     )
     def post(self, request, address):
         """
