@@ -6,12 +6,11 @@ from django.utils import timezone
 
 from celery import app
 from celery.utils.log import get_task_logger
-from ethereum.utils import check_checksum, checksum_encode, mk_contract_address
 from redis.exceptions import LockError
 from web3 import Web3
 from gnosis.eth import EthereumClientProvider, TransactionAlreadyImported
 from gnosis.eth.constants import NULL_ADDRESS
-from gnosis.eth.utils import mk_contract_addres
+from gnosis.eth.utils import mk_contract_address
 
 from safe_relay_service.gas_station.gas_station import GasStationProvider
 
@@ -408,6 +407,9 @@ def check_create2_deployed_safes_task() -> None:
                         )
                         safe_creation2.block_number = block_number
                         safe_creation2.save(update_fields=["block_number"])
+                        send_create_notification.delay(
+                            safe_address, safe_creation2.owners
+                        )
                 else:
                     # If safe was not included in any block after 30 minutes (mempool limit is 30 minutes)
                     # try to increase a little the gas price

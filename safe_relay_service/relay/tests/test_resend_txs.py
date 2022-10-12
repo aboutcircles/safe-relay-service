@@ -35,7 +35,7 @@ class TestResendTxsCommand(RelayTestCaseMixin, TestCase):
             threshold=len(accounts),
             initial_funding_wei=safe_balance,
         )
-        my_safe_address = safe.safe_address
+        my_safe_address = safe.address
 
         to = Account().create().address
         value = safe_balance // 4

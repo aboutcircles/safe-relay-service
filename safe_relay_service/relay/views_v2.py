@@ -11,7 +11,6 @@ from web3 import Web3
 
 from gnosis.eth.constants import NULL_ADDRESS
 from gnosis.safe.serializers import SafeMultisigEstimateTxSerializer
-from .tasks import deploy_create2_safe_task
 from safe_relay_service.relay.services import TransactionServiceProvider
 
 from .models import SafeCreation2
@@ -28,6 +27,7 @@ from .tasks import (
     begin_circles_onboarding_task,
     begin_circles_onboarding_organization_task,
 )
+from .tasks import deploy_create2_safe_task
 
 logger = getLogger(__name__)
 
@@ -253,4 +253,5 @@ class OrganizationSignalView(APIView):
             begin_circles_onboarding_organization_task.delay(
                 address, safe_creation.owners[0]
             )
+            deploy_create2_safe_task.delay(address)
             return Response(status=status.HTTP_202_ACCEPTED)

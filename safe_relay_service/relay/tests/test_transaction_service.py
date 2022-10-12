@@ -4,7 +4,7 @@ from eth_account import Account
 from hexbytes import HexBytes
 
 from gnosis.eth.constants import NULL_ADDRESS
-from gnosis.eth.contracts import get_paying_proxy_contract, get_safe_contract
+from gnosis.eth.contracts import get_paying_proxy_contract
 from gnosis.eth.utils import get_eth_address_with_key
 from gnosis.safe import Safe, SafeOperation
 
@@ -46,7 +46,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
         threshold = len(accounts)
 
         safe = self.deploy_test_safe(owners=owners, threshold=threshold)
-        my_safe_address = safe.safe_address
+        my_safe_address = safe.address
         my_safe_contract = safe.contract
         SafeContractFactory(address=my_safe_address)
 

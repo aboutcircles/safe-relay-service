@@ -7,7 +7,6 @@ from eth_account import Account
 from factory.django import DjangoModelFactory
 from hexbytes import HexBytes
 from web3 import Web3
-from gnosis.eth.utils import mk_contract_address
 
 from gnosis.eth.constants import (
     ERC20_721_TRANSFER_TOPIC,

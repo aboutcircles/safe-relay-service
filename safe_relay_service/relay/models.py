@@ -405,6 +405,12 @@ class EthereumTx(TimeStampedModel):
             "to": self.to,
             "value": self.value,
         }
+        if self.is_eip1559():
+            tx_params["maxFeePerGas"] = self.max_fee_per_gas
+            tx_params["maxPriorityFeePerGas"] = self.max_priority_fee_per_gas
+        else:
+            tx_params["gasPrice"] = self.gas_price
+        return tx_params
 
 
 class SafeMultisigTxManager(models.Manager):

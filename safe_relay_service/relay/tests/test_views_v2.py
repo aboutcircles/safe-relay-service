@@ -4,10 +4,10 @@ from django.conf import settings
 from django.urls import reverse
 
 from eth_account import Account
-from ethereum.utils import check_checksum
 from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase
+from web3 import Web3
 
 from gnosis.eth.constants import NULL_ADDRESS
 from gnosis.eth.utils import get_eth_address_with_invalid_checksum
@@ -68,8 +68,8 @@ class TestViewsV2(RelayTestCaseMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response_json = response.json()
         safe_address = response_json["safe"]
-        self.assertTrue(check_checksum(safe_address))
-        self.assertTrue(check_checksum(response_json["paymentReceiver"]))
+        self.assertTrue(Web3.isChecksumAddress((safe_address)))
+        self.assertTrue(Web3.isChecksumAddress((response_json["paymentReceiver"])))
         self.assertEqual(response_json["paymentToken"], NULL_ADDRESS)
         self.assertEqual(
             int(response_json["payment"]),
@@ -129,8 +129,8 @@ class TestViewsV2(RelayTestCaseMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response_json = response.json()
         safe_address = response_json["safe"]
-        self.assertTrue(check_checksum(safe_address))
-        self.assertTrue(check_checksum(response_json["paymentReceiver"]))
+        self.assertTrue(Web3.isChecksumAddress((safe_address)))
+        self.assertTrue(Web3.isChecksumAddress((response_json["paymentReceiver"])))
         self.assertEqual(response_json["paymentToken"], NULL_ADDRESS)
         self.assertEqual(response_json["payment"], str(fixed_creation_cost))
         self.assertGreater(int(response_json["gasEstimated"]), 0)
@@ -164,8 +164,8 @@ class TestViewsV2(RelayTestCaseMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response_json = response.json()
         safe_address = response_json["safe"]
-        self.assertTrue(check_checksum(safe_address))
-        self.assertTrue(check_checksum(response_json["paymentReceiver"]))
+        self.assertTrue(Web3.isChecksumAddress((safe_address)))
+        self.assertTrue(Web3.isChecksumAddress((response_json["paymentReceiver"])))
         self.assertEqual(response_json["paymentToken"], payment_token)
         self.assertEqual(
             int(response_json["payment"]),
@@ -208,10 +208,10 @@ class TestViewsV2(RelayTestCaseMixin, APITestCase):
         to = Account.create().address
         data = {"to": to, "value": initial_funding // 2, "data": "0x", "operation": 1}
 
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             number_owners=3, threshold=2, initial_funding_wei=initial_funding
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.address
 
         response = self.client.post(
             reverse("v2:safe-multisig-tx-estimate", args=(my_safe_address,)),

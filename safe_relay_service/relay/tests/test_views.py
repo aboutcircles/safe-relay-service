@@ -120,10 +120,10 @@ class TestViews(RelayTestCaseMixin, APITestCase):
         owners = [x.address for x in accounts]
         threshold = len(accounts)
 
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             owners=owners, threshold=threshold, initial_funding_wei=safe_balance
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.addresss
         SafeContractFactory(address=my_safe_address)
 
         self.assertEqual(
@@ -221,10 +221,10 @@ class TestViews(RelayTestCaseMixin, APITestCase):
         self.assertTrue("exists" in response.data["exception"])
 
         # Send with a Safe not created via the service
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             owners=owners, threshold=threshold, initial_funding_wei=safe_balance
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.addresss
         multisig_tx_hash = SafeTx(
             self.ethereum_client,
             my_safe_address,
@@ -373,10 +373,10 @@ class TestViews(RelayTestCaseMixin, APITestCase):
         owner = owner_account.address
         threshold = 1
 
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             owners=[owner], threshold=threshold, initial_funding_wei=safe_balance
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.addresss
         self.assertEqual(self.w3.eth.getBalance(my_safe_address), safe_balance)
         SafeContractFactory(address=my_safe_address)
 
@@ -517,10 +517,10 @@ class TestViews(RelayTestCaseMixin, APITestCase):
         to, _ = get_eth_address_with_key()
         data = {"to": to, "value": initial_funding // 2, "data": "0x", "operation": 1}
 
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             number_owners=3, threshold=2, initial_funding_wei=initial_funding
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.addresss
 
         response = self.client.post(
             reverse("v1:safe-multisig-tx-estimate", args=(my_safe_address,)),
@@ -588,10 +588,10 @@ class TestViews(RelayTestCaseMixin, APITestCase):
 
         initial_funding = self.w3.toWei(0.0001, "ether")
 
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             number_owners=3, threshold=2, initial_funding_wei=initial_funding
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.addresss
 
         to = Account.create().address
         tx = {"to": to, "value": initial_funding // 2, "data": "0x", "operation": 1}

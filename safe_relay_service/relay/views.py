@@ -281,11 +281,13 @@ class SafeSignalView(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use /v2/safes/{address}/funded",
         responses={
             202: "Task was queued",
             404: "Safe not found",
             422: "Safe address checksum not valid",
-        }
+        },
     )
     def put(self, request, address, format=None):
         """

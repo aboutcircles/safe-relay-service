@@ -159,6 +159,7 @@ class TransactionService:
         """
         Support tx.origin or relay tx sender as refund receiver.
         This would prevent that anybody can front-run our service
+
         :param refund_receiver: Payment refund receiver as Ethereum checksummed address
         :return: True if refund_receiver is ok, False otherwise
         """
@@ -191,6 +192,7 @@ class TransactionService:
         for the tx. Gas_price must be always > 0, if not refunding would be disabled
         If a `gas_token` is used we need to calculate the `gas_price` in Eth
         Gas price must be at least >= _minimum_gas_price_ > 0
+
         :param gas_token: Address of token is used, `NULL_ADDRESS` or `None` if it's ETH
         :return:
         :exception GasPriceTooLow
@@ -200,7 +202,6 @@ class TransactionService:
             raise RefundMustBeEnabled(
                 "Tx internal gas price cannot be 0 or less, it was %d" % safe_gas_price
             )
-
         minimum_accepted_gas_price = self._get_minimum_gas_price()
 
         estimated_gas_price = self._estimate_tx_gas_price(
@@ -497,6 +498,7 @@ class TransactionService:
         """
         This function calls the `send_multisig_tx` of the Safe, but has some limitations to prevent abusing
         the relay
+
         :return: Tuple(tx_hash, safe_tx_hash, tx)
         :raises: InvalidMultisigTx: If user tx cannot go through the Safe
         """
@@ -647,6 +649,7 @@ class TransactionService:
         Resend transaction with `gas_price` if it's higher or equal than transaction gas price. Setting equal
         `gas_price` is allowed as sometimes a transaction can be out of the mempool but `gas_price` does not need
         to be increased when resending
+
         :param gas_price: New gas price for the transaction. Must be >= old gas price
         :param multisig_tx: Multisig Tx not mined to be sent again
         :return: If a new transaction is sent is returned, `None` if not
