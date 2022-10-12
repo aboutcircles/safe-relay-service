@@ -140,6 +140,8 @@ class SafeCreationEstimateResponseSerializer(serializers.Serializer):
     payment = serializers.CharField()
     payment_token = EthereumAddressField(allow_null=True)
 
+class SafeAddressPredictionResponseSerializer(serializers.Serializer):
+    safe = EthereumAddressField()
 
 class SafeCreationResponseSerializer(serializers.Serializer):
     signature = SignatureResponseSerializer()

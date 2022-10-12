@@ -598,7 +598,7 @@ def begin_circles_onboarding_task(self, safe_address: str) -> None:
     :param safe_address: Address of the safe to-be-created
     """
 
-    assert check_checksum(safe_address)
+    assert Web3.isChecksumAddress(safe_address)
 
     redis = RedisRepository().redis
     lock_name = f"locks:begin_circles_onboarding_task:{safe_address}"
@@ -641,7 +641,7 @@ def circles_onboarding_safe_task(self, safe_address: str) -> None:
     :param safe_address: Address of the safe to-be-created
     """
 
-    assert check_checksum(safe_address)
+    assert Web3.isChecksumAddress(safe_address)
 
     try:
         redis = RedisRepository().redis
@@ -713,8 +713,8 @@ def begin_circles_onboarding_organization_task(
     :param owner_address: Address of the first safe owner
     """
 
-    assert check_checksum(safe_address)
-    assert check_checksum(owner_address)
+    assert Web3.isChecksumAddress(safe_address)
+    assert Web3.isChecksumAddress(owner_address)
 
     redis = RedisRepository().redis
     lock_name = f"locks:begin_circles_onboarding_organization_task:{safe_address}"
@@ -758,8 +758,8 @@ def circles_onboarding_organization_safe_task(
     :param owner_address: Address of the first safe owner
     """
 
-    assert check_checksum(safe_address)
-    assert check_checksum(owner_address)
+    assert Web3.isChecksumAddress(safe_address)
+    assert Web3.isChecksumAddress(owner_address)
 
     try:
         redis = RedisRepository().redis
@@ -802,7 +802,7 @@ def circles_onboarding_organization_signup_task(safe_address: str) -> None:
     :param safe_address: Address of the created safe
     """
 
-    assert check_checksum(safe_address)
+    assert Web3.isChecksumAddress(safe_address)
 
     # Additional funds for organization deployments (it should at least cover
     # one `trust` method call) next to the `organizationSignup` method

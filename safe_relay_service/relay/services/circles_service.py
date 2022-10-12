@@ -1,8 +1,6 @@
 from django.conf import settings
 from hexbytes import HexBytes
 
-from ethereum.utils import check_checksum
-
 from gnosis.eth import EthereumClient
 from gnosis.eth.constants import NULL_ADDRESS
 
@@ -31,7 +29,7 @@ class CirclesService:
         :param token_address:
         :return: packed string
         """
-        assert check_checksum(token_address)
+        assert Web3.isChecksumAddress(token_address)
         return MAPPING_NULL_PREFIX + token_address[2:]
 
     def is_circles_token(self, token_address: str) -> bool:
