@@ -79,6 +79,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders"
     # 'django.contrib.humanize', # Handy template tags
 ]
 THIRD_PARTY_APPS = [
@@ -98,6 +99,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -110,7 +112,7 @@ MIDDLEWARE = [
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = env("STATIC_ROOT", default=str(ROOT_DIR("staticfiles")))
+STATIC_ROOT = '/usr/share/nginx/html/relayer'
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
@@ -305,13 +307,14 @@ LOGGING = {
     },
 }
 
-REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL = env('RELAYER_REDIS_URL', default='redis://redis:6379/0')
 
 
 # Ethereum
 # ------------------------------------------------------------------------------
-ETH_HASH_PREFIX = env("ETH_HASH_PREFIX", default="GNO")
-ETHEREUM_NODE_URL = env("ETHEREUM_NODE_URL", default=None)
+ETH_HASH_PREFIX = env("ETH_HASH_PREFIX", default="ETH")
+ETHEREUM_NODE_URL = env('ETHEREUM_NODE_ENDPOINT', default=None)
+ETHEREUM_TRACING_NODE_URL = env('ETHEREUM_TRACING_NODE_URL', default=ETHEREUM_NODE_URL)
 
 GAS_STATION_NUMBER_BLOCKS = env("GAS_STATION_NUMBER_BLOCKS", default=300)
 
@@ -408,6 +411,16 @@ TOKEN_LOGO_BASE_URI = env(
 )
 TOKEN_LOGO_EXTENSION = env("TOKEN_LOGO_EXTENSION", default=".png")
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': env('RELAYER_REDIS_URL'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'IGNORE_EXCEPTIONS': True,
+        }
+    }
+}
 
 # CIRCLES
 

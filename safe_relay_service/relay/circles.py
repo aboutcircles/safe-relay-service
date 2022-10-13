@@ -2,8 +2,7 @@ from django.conf import settings
 from logging import getLogger
 
 from gnosis.eth import EthereumClientProvider
-from ethereum.utils import check_checksum
-
+from web3 import Web3
 
 class Circles:
     def __init__(self):
@@ -14,7 +13,7 @@ class Circles:
         return self.gas_price
 
     def pack_address(self, address):
-        assert check_checksum(address)
+        assert Web3.isChecksumAddress (address)
         return "000000000000000000000000" + address[2:]
 
     def is_circles_token(self, address):
