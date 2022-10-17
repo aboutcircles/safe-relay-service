@@ -278,24 +278,18 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG" if DEBUG else "INFO",
         },
-        "celery": {
-            "handlers": ["console"],
-            "level": "DEBUG" if DEBUG else "INFO",
-            "propagate": False,  # If not it will be out for the root logger too
-        },
         "celery.worker.strategy": {
             "handlers": ["console"],
             "level": "DEBUG" if DEBUG else "INFO",
-            "propagate": False,  # If not it will be out for the root logger too
         },
         "django.request": {
-            "handlers": ["mail_admins"],
+            "handlers": ["console"],
             "level": "ERROR",
             "propagate": True,
         },
         "django.security.DisallowedHost": {
             "level": "ERROR",
-            "handlers": ["console", "mail_admins"],
+            "handlers": ["console"],
             "propagate": True,
         },
         "django.server": {  # Gunicorn uses `gunicorn.access`
