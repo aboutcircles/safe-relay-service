@@ -2,8 +2,7 @@ from django.conf import settings
 from logging import getLogger
 
 from gnosis.eth import EthereumClientProvider
-from ethereum.utils import check_checksum
-
+from web3 import Web3
 
 class Circles:
     def __init__(self):
