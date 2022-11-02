@@ -52,7 +52,7 @@ Fork of [Gnosis Safe Relay Service](https://docs.gnosis.io/safe/docs/services_re
 ```
 MIT License
 
-Copyright (c) 2018 Gnosis Ltd
+Copyright (c) 2018 Safe Ecosystem Foundation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
