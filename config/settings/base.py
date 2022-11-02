@@ -17,7 +17,7 @@ if READ_DOT_ENV_FILE or DOT_ENV_FILE:
 
 # GENERAL
 
-DEBUG = env.bool("DJANGO_DEBUG", False)
+DEBUG = env.bool("DEBUG", False)
 TIME_ZONE = "UTC"
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
@@ -280,21 +280,34 @@ SAFE_FUNDING_CONFIRMATIONS = env.int(
 SAFE_CONTRACT_ADDRESS = env("SAFE_ADDRESS", default="0x" + "0" * 39 + "1")
 
 # SAFE_ADDRESS_CRC => SAFE CONTRACT CIRCLES
-SAFE_V1_0_0_CONTRACT_ADDRESS = env("SAFE_CONTRACT_ADDRESS_CRC", default="0x" + "0" * 39 + "1")
-SAFE_V0_0_1_CONTRACT_ADDRESS = env("SAFE_CONTRACT_ADDRESS_0_0_1)", default="0x" + "0" * 39 + "1")
+SAFE_V1_1_1_CONTRACT_ADDRESS = env("SAFE_CONTRACT_ADDRESS_CRC", default="0x" + "0" * 39 + "2")
+SAFE_V1_0_0_CONTRACT_ADDRESS = env("SAFE_CONTRACT_ADDRESS_CRC", default="0x" + "0" * 39 + "2")
+SAFE_V0_0_1_CONTRACT_ADDRESS = env("SAFE_CONTRACT_ADDRESS_CRC)", default="0x" + "0" * 39 + "2")
 SAFE_VALID_CONTRACT_ADDRESSES = set(
-    env.list("SAFE_VALID_CONTRACT_ADDRESSES", default=["0x" + "0" * 39 + "1"])
-) | {SAFE_CONTRACT_ADDRESS, SAFE_V1_0_0_CONTRACT_ADDRESS, SAFE_V0_0_1_CONTRACT_ADDRESS}
+    env.list(
+        "SAFE_VALID_CONTRACT_ADDRESSES",
+        default=[
+            "0x" + "0" * 39 + "1",
+            "0x" + "0" * 39 + "2",
+        ],
+    )
+    + [
+        SAFE_CONTRACT_ADDRESS,
+        SAFE_V1_1_1_CONTRACT_ADDRESS,
+        SAFE_V1_0_0_CONTRACT_ADDRESS,
+        SAFE_V0_0_1_CONTRACT_ADDRESS,
+    ]
+)
 
 # PROXY_FACTORY_ADDRESS => PROXY FACTORY V1.3.0
-SAFE_PROXY_FACTORY_ADDRESS = env("PROXY_FACTORY_ADDRESS", default="0x" + "0" * 39 + "2")
+SAFE_PROXY_FACTORY_ADDRESS = env("PROXY_FACTORY_ADDRESS", default="0x" + "0" * 39 + "3")
 
 # PROXY_FACTORY_ADDRESS_CRC => PROXY FACTORY CIRCLES VERSION
 SAFE_PROXY_FACTORY_V1_0_0_ADDRESS = env(
-    "PROXY_FACTORY_ADDRESS_CRC", default="0x" + "0" * 39 + "2"
+    "PROXY_FACTORY_ADDRESS_CRC", default="0x" + "0" * 39 + "4"
 )
 SAFE_DEFAULT_CALLBACK_HANDLER = env(
-    "SAFE_DEFAULT_CALLBACK_HANDLER", default="0x" + "0" * 39 + "3"
+    "SAFE_DEFAULT_CALLBACK_HANDLER", default="0x" + "0" * 39 + "5"
 )
 
 # If FIXED_GAS_PRICE is None, GasStation will be used
@@ -334,7 +347,7 @@ CACHES = {
 
 # CIRCLES
 
-CIRCLES_HUB_ADDRESS = env("HUB_ADDRESS", default="0x" + "0" * 39 + "2")
+CIRCLES_HUB_ADDRESS = env("HUB_ADDRESS", default="0x" + "0" * 39 + "6")
 GRAPH_NODE_ENDPOINT = env("GRAPH_NODE_ENDPOINT", default="")
 MIN_TRUST_CONNECTIONS = env("MIN_TRUST_CONNECTIONS", default=3)
 SUBGRAPH_NAME = env("SUBGRAPH_NAME", default="")
