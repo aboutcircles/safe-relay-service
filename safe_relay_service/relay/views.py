@@ -117,7 +117,6 @@ class AboutView(APIView):
                 "SAFE_ACCOUNTS_BALANCE_WARNING": settings.SAFE_ACCOUNTS_BALANCE_WARNING,
                 "SAFE_CHECK_DEPLOYER_FUNDED_DELAY": settings.SAFE_CHECK_DEPLOYER_FUNDED_DELAY,
                 "SAFE_CHECK_DEPLOYER_FUNDED_RETRIES": settings.SAFE_CHECK_DEPLOYER_FUNDED_RETRIES,
-                "SAFE_CONTRACT_ADDRESS": settings.SAFE_CONTRACT_ADDRESS,
                 "SAFE_DEFAULT_CALLBACK_HANDLER": settings.SAFE_DEFAULT_CALLBACK_HANDLER,
                 "SAFE_FIXED_CREATION_COST": settings.SAFE_FIXED_CREATION_COST,
                 "SAFE_FUNDER_MAX_ETH": settings.SAFE_FUNDER_MAX_ETH,
@@ -129,6 +128,8 @@ class AboutView(APIView):
                 "SAFE_TX_SENDER_PUBLIC_KEY": safe_sender_public_key,
                 "SAFE_V0_0_1_CONTRACT_ADDRESS": settings.SAFE_V0_0_1_CONTRACT_ADDRESS,
                 "SAFE_V1_0_0_CONTRACT_ADDRESS": settings.SAFE_V1_0_0_CONTRACT_ADDRESS,
+                "SAFE_V1_1_1_CONTRACT_ADDRESS": settings.SAFE_V1_1_1_CONTRACT_ADDRESS,
+                "SAFE_CONTRACT_ADDRESS": settings.SAFE_CONTRACT_ADDRESS,
                 "SAFE_VALID_CONTRACT_ADDRESSES": settings.SAFE_VALID_CONTRACT_ADDRESSES,
             },
         }
@@ -226,11 +227,13 @@ class SafeBalanceView(APIView):
     serializer_class = SafeBalanceResponseSerializer
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use tx service",
         responses={
             200: SafeBalanceResponseSerializer(many=True),
             404: "Safe not found",
             422: "Safe address checksum not valid",
-        }
+        },
     )
     def get(self, request, address, format=None):
         """
@@ -255,11 +258,13 @@ class SafeSignalView(APIView):
     permission_classes = (AllowAny,)
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use /v2/safes/{address}/funded",
         responses={
             200: SafeFundingResponseSerializer(),
             404: "Safe not found",
             422: "Safe address checksum not valid",
-        }
+        },
     )
     def get(self, request, address, format=None):
         """
@@ -276,11 +281,13 @@ class SafeSignalView(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use /v2/safes/{address}/funded",
         responses={
             202: "Task was queued",
             404: "Safe not found",
             422: "Safe address checksum not valid",
-        }
+        },
     )
     def put(self, request, address, format=None):
         """
@@ -303,12 +310,14 @@ class SafeMultisigTxEstimateView(CreateAPIView):
     serializer_class = SafeMultisigEstimateTxSerializer
 
     @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use /v2/safes/{address}/transactions/estimate",
         responses={
             200: SafeMultisigEstimateTxResponseSerializer(),
             400: "Data not valid",
             404: "Safe not found",
             422: "Safe address checksum not valid/Tx not valid",
-        }
+        },
     )
     def post(self, request, address):
         """
@@ -353,7 +362,8 @@ class SafeMultisigTxEstimatesView(CreateAPIView):
     )
     def post(self, request, address):
         """
-        Estimates a Safe Multisig Transaction. `operational_gas` and `data_gas` are deprecated, use `base_gas` instead
+        Estimates a Safe Multisig Transaction for all tokens supported. `operational_gas` and `data_gas`
+        are deprecated, use `base_gas` instead
         """
         if not Web3.isChecksumAddress(address):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -473,6 +483,13 @@ class ERC20View(SafeListApiView):
             "ethereum_tx", "ethereum_tx__block"
         )
 
+    @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use tx service",
+    )
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
 
 class ERC721View(SafeListApiView):
     ordering = ("-ethereum_tx__block__number",)
@@ -483,6 +500,13 @@ class ERC721View(SafeListApiView):
         return EthereumEvent.objects.erc721_events(address=address).select_related(
             "ethereum_tx", "ethereum_tx__block"
         )
+
+    @swagger_auto_schema(
+        deprecated=True,
+        operation_description="Use tx service",
+    )
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
 
 
 class StatsView(APIView):
