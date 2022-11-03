@@ -11,7 +11,7 @@ from packaging.version import Version
 from redis import Redis
 from web3.exceptions import BadFunctionCallOutput
 
-from gnosis.eth import EthereumClient, EthereumClientProvider, InvalidNonce
+from gnosis.eth import EthereumClient, EthereumClientProvider, InvalidNonce, TxSpeed
 from gnosis.eth.constants import NULL_ADDRESS
 from gnosis.safe import ProxyFactory, Safe
 from gnosis.safe.exceptions import InvalidMultisigTx, SafeServiceException
@@ -160,6 +160,7 @@ class TransactionService:
         """
         Support tx.origin or relay tx sender as refund receiver.
         This would prevent that anybody can front-run our service
+
         :param refund_receiver: Payment refund receiver as Ethereum checksummed address
         :return: True if refund_receiver is ok, False otherwise
         """
@@ -192,6 +193,7 @@ class TransactionService:
         for the tx. Gas_price must be always > 0, if not refunding would be disabled
         If a `gas_token` is used we need to calculate the `gas_price` in Eth
         Gas price must be at least >= _minimum_gas_price_ > 0
+
         :param gas_token: Address of token is used, `NULL_ADDRESS` or `None` if it's ETH
         :return:
         :exception GasPriceTooLow
@@ -506,6 +508,7 @@ class TransactionService:
         """
         This function calls the `send_multisig_tx` of the Safe, but has some limitations to prevent abusing
         the relay
+
         :return: Tuple(tx_hash, safe_tx_hash, tx)
         :raises: InvalidMultisigTx: If user tx cannot go through the Safe
         """
@@ -637,6 +640,7 @@ class TransactionService:
                 tx_gas_price=tx_gas_price,
                 tx_nonce=tx_nonce,
                 block_identifier=block_identifier,
+                eip1559_speed=TxSpeed.NORMAL,
             )
             logger.info(
                 "Safe=%s, Sent transaction with nonce=%d tx-hash=%s for safe-tx-hash=%s safe-nonce=%d",
@@ -655,6 +659,7 @@ class TransactionService:
         Resend transaction with `gas_price` if it's higher or equal than transaction gas price. Setting equal
         `gas_price` is allowed as sometimes a transaction can be out of the mempool but `gas_price` does not need
         to be increased when resending
+
         :param gas_price: New gas price for the transaction. Must be >= old gas price
         :param multisig_tx: Multisig Tx not mined to be sent again
         :return: If a new transaction is sent is returned, `None` if not
@@ -732,6 +737,7 @@ class TransactionService:
                 tx_gas=tx_gas,
                 tx_gas_price=gas_price,
                 tx_nonce=multisig_tx.ethereum_tx.nonce,
+                eip1559_speed=TxSpeed.NORMAL,
             )
             logger.info(
                 "Tx with old tx-hash %s was resent with a new tx-hash %s",
@@ -751,6 +757,7 @@ class TransactionService:
                     tx_gas=tx_gas,
                     tx_gas_price=gas_price,
                     tx_nonce=tx_nonce,
+                    eip1559_speed=TxSpeed.NORMAL,
                 )
                 logger.error(
                     "Nonce problem, sending transaction for Safe %s with a new nonce %d and tx-hash %s",
