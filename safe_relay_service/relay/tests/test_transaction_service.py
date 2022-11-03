@@ -4,7 +4,7 @@ from eth_account import Account
 from hexbytes import HexBytes
 
 from gnosis.eth.constants import NULL_ADDRESS
-from gnosis.eth.contracts import get_paying_proxy_contract, get_safe_contract
+from gnosis.eth.contracts import get_paying_proxy_contract
 from gnosis.eth.utils import get_eth_address_with_key
 from gnosis.safe import Safe, SafeOperation
 
@@ -45,9 +45,9 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
         owners = [x.address for x in accounts]
         threshold = len(accounts)
 
-        safe_creation = self.deploy_test_safe(owners=owners, threshold=threshold)
-        my_safe_address = safe_creation.safe_address
-        my_safe_contract = get_safe_contract(w3, my_safe_address)
+        safe = self.deploy_test_safe(owners=owners, threshold=threshold)
+        my_safe_address = safe.address
+        my_safe_contract = safe.contract
         SafeContractFactory(address=my_safe_address)
 
         to = funder
@@ -269,8 +269,8 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
         self.assertEqual(BannedSigner.objects.count(), 0)
 
         sender = self.transaction_service.tx_sender_account.address
-        sender_balance = w3.eth.getBalance(sender)
-        safe_balance = w3.eth.getBalance(my_safe_address)
+        sender_balance = w3.eth.get_balance(sender)
+        safe_balance = w3.eth.get_balance(my_safe_address)
 
         safe_multisig_tx = self.transaction_service.create_multisig_tx(
             my_safe_address,
@@ -303,7 +303,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
                 signatures,
             )
 
-        tx_receipt = w3.eth.waitForTransactionReceipt(
+        tx_receipt = w3.eth.wait_for_transaction_receipt(
             safe_multisig_tx.ethereum_tx.tx_hash
         )
         self.assertTrue(tx_receipt["status"])
@@ -313,13 +313,13 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
             safe_multisig_tx.ethereum_tx.gas_price, gas_price
         )  # We used minimum gas price
 
-        sender_new_balance = w3.eth.getBalance(sender)
+        sender_new_balance = w3.eth.get_balance(sender)
         gas_used = tx_receipt["gasUsed"]
         tx_fees = gas_used * safe_multisig_tx.ethereum_tx.gas_price
         estimated_refund = (
             safe_multisig_tx.data_gas + safe_multisig_tx.safe_tx_gas
         ) * safe_multisig_tx.gas_price
-        real_refund = safe_balance - w3.eth.getBalance(my_safe_address) - value
+        real_refund = safe_balance - w3.eth.get_balance(my_safe_address) - value
         # Real refund can be less if not all the `safe_tx_gas` is used
         self.assertGreaterEqual(estimated_refund, real_refund)
         self.assertEqual(sender_new_balance, sender_balance - tx_fees + real_refund)
@@ -377,7 +377,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
             nonce,
             signatures,
         )
-        tx_receipt = w3.eth.waitForTransactionReceipt(
+        tx_receipt = w3.eth.wait_for_transaction_receipt(
             safe_multisig_tx.ethereum_tx.tx_hash
         )
         self.assertTrue(tx_receipt["status"])
@@ -403,7 +403,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
 
         # We need a real safe deployed for this method to work
         gas_token = NULL_ADDRESS
-        safe_address = self.deploy_test_safe().safe_address
+        safe_address = self.deploy_test_safe().address
         transaction_estimation = self.transaction_service.estimate_tx(
             safe_address, to, value, data, operation, gas_token
         )
@@ -416,7 +416,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
         self.assertEqual(transaction_estimation.gas_token, NULL_ADDRESS)
 
     def test_estimate_tx_for_all_tokent(self):
-        safe_address = self.deploy_test_safe().safe_address
+        safe_address = self.deploy_test_safe().address
         to = Account.create().address
         value = 0
         data = b""
@@ -471,7 +471,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
         self.assertEqual(estimation_token.gas_token, valid_token.address)
 
     def test_get_last_nonce(self):
-        safe_address = self.deploy_test_safe().safe_address
+        safe_address = self.deploy_test_safe().address
         safe_contract = SafeContractFactory(address=safe_address)
         self.assertIsNone(self.transaction_service.get_last_used_nonce(safe_address))
         SafeMultisigTxFactory(safe=safe_contract, nonce=12)

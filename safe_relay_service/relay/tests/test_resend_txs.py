@@ -30,12 +30,12 @@ class TestResendTxsCommand(RelayTestCaseMixin, TestCase):
         # Signatures must be sorted!
         accounts.sort(key=lambda account: account.address.lower())
 
-        safe_creation = self.deploy_test_safe(
+        safe = self.deploy_test_safe(
             owners=[x.address for x in accounts],
             threshold=len(accounts),
             initial_funding_wei=safe_balance,
         )
-        my_safe_address = safe_creation.safe_address
+        my_safe_address = safe.address
 
         to = Account().create().address
         value = safe_balance // 4
@@ -81,17 +81,17 @@ class TestResendTxsCommand(RelayTestCaseMixin, TestCase):
             signatures,
         )
 
-        tx_receipt = w3.eth.waitForTransactionReceipt(
+        tx_receipt = w3.eth.wait_for_transaction_receipt(
             safe_multisig_tx.ethereum_tx.tx_hash
         )
         self.assertTrue(tx_receipt["status"])
         self.assertEqual(w3.toChecksumAddress(tx_receipt["from"]), sender)
         self.assertEqual(w3.toChecksumAddress(tx_receipt["to"]), my_safe_address)
-        self.assertEqual(w3.eth.getBalance(to), value)
+        self.assertEqual(w3.eth.get_balance(to), value)
 
         w3.testing.revert(snapshot_id)  # Revert to snapshot in ganache
         snapshot_id = w3.testing.snapshot()
-        self.assertEqual(w3.eth.getBalance(to), 0)
+        self.assertEqual(w3.eth.get_balance(to), 0)
 
         old_multisig_tx: SafeMultisigTx = SafeMultisigTx.objects.all().first()
         old_multisig_tx.created = timezone.now() - timedelta(days=1)
@@ -102,14 +102,14 @@ class TestResendTxsCommand(RelayTestCaseMixin, TestCase):
         multisig_tx: SafeMultisigTx = SafeMultisigTx.objects.all().first()
         self.assertNotEqual(multisig_tx.ethereum_tx_id, old_multisig_tx.ethereum_tx_id)
         self.assertEqual(multisig_tx.ethereum_tx.gas_price, new_gas_price)
-        self.assertEqual(w3.eth.getBalance(to), value)  # Tx is executed again
+        self.assertEqual(w3.eth.get_balance(to), value)  # Tx is executed again
         self.assertEqual(
             multisig_tx.get_safe_tx(self.ethereum_client).__dict__,
             old_multisig_tx.get_safe_tx(self.ethereum_client).__dict__,
         )
 
         w3.testing.revert(snapshot_id)  # Revert to snapshot in ganache
-        self.assertEqual(w3.eth.getBalance(to), 0)
+        self.assertEqual(w3.eth.get_balance(to), 0)
 
         old_multisig_tx: SafeMultisigTx = SafeMultisigTx.objects.all().first()
         old_multisig_tx.created = timezone.now() - timedelta(days=1)
@@ -120,7 +120,7 @@ class TestResendTxsCommand(RelayTestCaseMixin, TestCase):
         multisig_tx: SafeMultisigTx = SafeMultisigTx.objects.all().first()
         self.assertEqual(multisig_tx.ethereum_tx_id, old_multisig_tx.ethereum_tx_id)
         self.assertEqual(multisig_tx.ethereum_tx.gas_price, new_gas_price)
-        self.assertEqual(w3.eth.getBalance(to), value)  # Tx is executed again
+        self.assertEqual(w3.eth.get_balance(to), value)  # Tx is executed again
         self.assertEqual(
             multisig_tx.get_safe_tx(self.ethereum_client).__dict__,
             old_multisig_tx.get_safe_tx(self.ethereum_client).__dict__,
