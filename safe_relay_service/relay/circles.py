@@ -4,6 +4,7 @@ from logging import getLogger
 from gnosis.eth import EthereumClientProvider
 from web3 import Web3
 
+
 class Circles:
     def __init__(self):
         self.gas_price = 1  # gas price when paid in circles token
