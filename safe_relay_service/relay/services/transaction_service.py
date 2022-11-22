@@ -129,6 +129,7 @@ class TransactionServiceProvider:
                 RedisRepository().redis,
                 settings.SAFE_VALID_CONTRACT_ADDRESSES,
                 settings.SAFE_PROXY_FACTORY_ADDRESS,
+                settings.SAFE_PROXY_FACTORY_V1_0_0_ADDRESS,
                 settings.SAFE_TX_SENDER_PRIVATE_KEY,
             )
         return cls.instance
@@ -147,6 +148,7 @@ class TransactionService:
         redis: Redis,
         safe_valid_contract_addresses: Set[str],
         proxy_factory_address: str,
+        proxy_factory_crc_address: str,
         tx_sender_private_key: str,
     ):
         self.gas_station = gas_station
@@ -154,6 +156,9 @@ class TransactionService:
         self.redis = redis
         self.safe_valid_contract_addresses = safe_valid_contract_addresses
         self.proxy_factory = ProxyFactory(proxy_factory_address, self.ethereum_client)
+        self.proxy_factory_crc = ProxyFactory(
+            proxy_factory_crc_address, self.ethereum_client
+        )
         self.tx_sender_account: LocalAccount = Account.from_key(tx_sender_private_key)
 
     def _check_refund_receiver(self, refund_receiver: str) -> bool:
@@ -529,8 +534,10 @@ class TransactionService:
 
         self._check_safe_gas_price(gas_token, gas_price)
 
-        # Make sure proxy contract is ours
-        if not self.proxy_factory.check_proxy_code(safe_address):
+        # Make sure proxy contract is ours (either of v1.1.1+Circles or v1.3.0)
+        if not self.proxy_factory.check_proxy_code(
+            safe_address
+        ) and not self.proxy_factory_crc.check_proxy_code(safe_address):
             raise InvalidProxyContract(safe_address)
 
         # Make sure master copy is valid
