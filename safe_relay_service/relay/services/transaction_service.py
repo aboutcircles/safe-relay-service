@@ -400,7 +400,7 @@ class TransactionService:
         data = "0xb7bc0f73"
         estimated = self.estimate_circles_hub_method(data, safe_address, gas_token)
         logger.info("estimated value for token deployment: %s", estimated)
-        return 1900000000000000
+        return 2500000000000000
 
     def estimate_circles_organization_signup_tx(
         self, safe_address: str, gas_token: str = NULL_ADDRESS
