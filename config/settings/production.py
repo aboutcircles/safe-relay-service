@@ -8,7 +8,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 ALLOWED_HOSTS = [
     "relayer-service",
     env("HOST_RELAYER", default="localhost"),
-    env("DJANGO_ALLOWED_HOSTS", default="circles.garden"),
+    env("DJANGO_ALLOWED_HOSTS", default=".circles.garden"),
 ]
 
 # DATABASES
