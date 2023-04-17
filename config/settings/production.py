@@ -11,6 +11,7 @@ ALLOWED_HOSTS = [
     env("DJANGO_ALLOWED_HOSTS", default=".circles.garden"),
 ]
 
+
 # DATABASES
 
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
