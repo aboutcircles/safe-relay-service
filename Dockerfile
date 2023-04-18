@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.10
 
 ENV PYTHONUNBUFFERED 1
 ENV TINI_VERSION v0.19.0
@@ -32,8 +32,8 @@ RUN set -ex \
       pkg-config \
       " \
       && apt-get install -y --no-install-recommends $buildDeps tmux \
-      && pip install -U --no-cache-dir wheel setuptools pip \
-      && pip install --no-cache-dir -r requirements.txt \
+      && pip3 install -U --no-cache-dir wheel setuptools pip \
+      && pip3 install --no-cache-dir -r requirements.txt \
       && apt-get purge -y --auto-remove $buildDeps \
       && rm -rf /var/lib/apt/lists/* \
       && find /usr/local \
