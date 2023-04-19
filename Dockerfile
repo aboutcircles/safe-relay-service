@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.9-slim
 
 ENV PYTHONUNBUFFERED 1
 ENV TINI_VERSION v0.19.0
@@ -31,6 +31,7 @@ RUN set -ex \
       libgmp-dev \
       pkg-config \
       " \
+      && apt-get update \
       && apt-get install -y --no-install-recommends $buildDeps tmux \
       && pip install -U --no-cache-dir wheel setuptools pip \
       && pip install --no-cache-dir -r requirements.txt \
