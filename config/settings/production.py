@@ -58,7 +58,6 @@ INSTALLED_APPS += ["gunicorn"]
 
 # Django CORS
 
-CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOWED_ORIGIN_REGEXES = env.list("CORS_ALLOWED_ORIGIN_REGEXES", default=[r"^https:\/\/\w+\.circles\.garden$"])
 
 # SAFE
