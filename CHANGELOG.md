@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update git actions [#79](https://github.com/CirclesUBI/safe-relay-service/pull/79)
 
+- Update requirements.txt to avoid python conflicts [#80](https://github.com/CirclesUBI/safe-relay-service/pull/80)
+
 ## [5.0.3] - 2023-02-08
 
 ### Fixed 
