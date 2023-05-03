@@ -26,5 +26,5 @@ psycopg2==2.9.4
 redis==4.3.4
 requests==2.28.1
 sgqlc==11.0
-safe-eth-py[django]==5.02
+safe-eth-py[django]
 web3==5.31.3
