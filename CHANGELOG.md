@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 
 - Update gas price for shared wallet account creation [#74](https://github.com/CirclesUBI/safe-relay-service/pull/74)
 
+- Update git actions [#79](https://github.com/CirclesUBI/safe-relay-service/pull/79)
+
 ## [5.0.3] - 2023-02-08
 
 ### Fixed 
