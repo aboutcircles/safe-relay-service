@@ -409,8 +409,8 @@ class TransactionService:
         :param gas_token:
         """
         # Tx data from Circles Hub contract organizationSignup method
-        data = "0x3fbd653c"
-        return 10000000000000000
+        # data = "0x3fbd653c"
+        return 100000000000000000
         # return self.estimate_circles_hub_method(data, safe_address, gas_token)
 
     def create_multisig_tx(
