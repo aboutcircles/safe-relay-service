@@ -16,7 +16,7 @@ RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
 
 # Install postgres-client
 RUN apt-get update \
-      && apt-get install -y git postgresql-client libpq-dev libxml2-dev libxslt-dev python3 zlib1g-dev
+      && apt-get install -y git postgresql-client libpq-dev libxml2-dev libxslt-dev python zlib1g-dev
 
 WORKDIR safe-relay-service
 
