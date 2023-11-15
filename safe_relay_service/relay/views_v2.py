@@ -152,7 +152,7 @@ class SafeMultisigTxEstimateView(CreateAPIView):
         """
         Estimates a Safe Multisig Transaction. `operational_gas` and `data_gas` are deprecated, use `base_gas` instead
         """
-        if not Web3.isChecksumAddress(address):
+        if not Web3.is_checksum_address(address):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         request.data["safe"] = address
@@ -190,7 +190,7 @@ class SafeSignalView(APIView):
         """
         Get status of the safe creation
         """
-        if not Web3.isChecksumAddress(address):
+        if not Web3.is_checksum_address(address):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         else:
             try:
@@ -211,7 +211,7 @@ class SafeSignalView(APIView):
         """
         Force check of a safe balance to start the safe creation
         """
-        if not Web3.isChecksumAddress(address):
+        if not Web3.is_checksum_address(address):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         else:
             try:
@@ -240,7 +240,7 @@ class OrganizationSignalView(APIView):
         Force check of a safe balance to start the safe creation for a Circles
         organization
         """
-        if not Web3.isChecksumAddress(address):
+        if not Web3.is_checksum_address(address):
             return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         else:
             safe_creation = None

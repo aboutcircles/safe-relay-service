@@ -34,7 +34,7 @@ class TestTransactionService(RelayTestCaseMixin, TestCase):
         w3 = self.w3
 
         # The balance we will send to the safe
-        safe_balance = w3.toWei(0.02, "ether")
+        safe_balance = w3.to_wei(0.02, "ether")
 
         # Create Safe
         funder_account = self.ethereum_test_account

@@ -31,7 +31,7 @@ class CirclesService:
         :param token_address:
         :return: packed string
         """
-        assert Web3.isChecksumAddress(token_address)
+        assert Web3.is_checksum_address(token_address)
         return MAPPING_NULL_PREFIX + token_address[2:]
 
     def is_circles_token(self, token_address: str) -> bool:

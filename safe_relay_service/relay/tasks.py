@@ -63,8 +63,8 @@ def fund_deployer_task(self, safe_address: str, retry: bool = True) -> None:
     payment = safe_creation.payment
 
     # These asserts just to make sure we are not wasting money
-    assert Web3.isChecksumAddress(safe_address)
-    assert Web3.isChecksumAddress(deployer_address)
+    assert Web3.is_checksum_address(safe_address)
+    assert Web3.is_checksum_address(deployer_address)
     assert mk_contract_address(deployer_address, 0) == safe_address
     assert payment > 0
 
@@ -360,7 +360,7 @@ def deploy_create2_safe_task(self, safe_address: str, retry: bool = True) -> Non
     :param retry: if True, retries are allowed, otherwise don't retry
     """
 
-    assert Web3.isChecksumAddress(safe_address)
+    assert Web3.is_checksum_address(safe_address)
 
     redis = RedisRepository().redis
     lock_name = f"locks:deploy_create2_safe:{safe_address}"
@@ -596,7 +596,7 @@ def begin_circles_onboarding_task(self, safe_address: str) -> None:
     :param safe_address: Address of the safe to-be-created
     """
 
-    assert Web3.isChecksumAddress(safe_address)
+    assert Web3.is_checksum_address(safe_address)
 
     redis = RedisRepository().redis
     lock_name = f"locks:begin_circles_onboarding_task:{safe_address}"
@@ -639,7 +639,7 @@ def circles_onboarding_safe_task(self, safe_address: str) -> None:
     :param safe_address: Address of the safe to-be-created
     """
 
-    assert Web3.isChecksumAddress(safe_address)
+    assert Web3.is_checksum_address(safe_address)
 
     try:
         redis = RedisRepository().redis
@@ -711,8 +711,8 @@ def begin_circles_onboarding_organization_task(
     :param owner_address: Address of the first safe owner
     """
 
-    assert Web3.isChecksumAddress(safe_address)
-    assert Web3.isChecksumAddress(owner_address)
+    assert Web3.is_checksum_address(safe_address)
+    assert Web3.is_checksum_address(owner_address)
 
     redis = RedisRepository().redis
     lock_name = f"locks:begin_circles_onboarding_organization_task:{safe_address}"
@@ -756,8 +756,8 @@ def circles_onboarding_organization_safe_task(
     :param owner_address: Address of the first safe owner
     """
 
-    assert Web3.isChecksumAddress(safe_address)
-    assert Web3.isChecksumAddress(owner_address)
+    assert Web3.is_checksum_address(safe_address)
+    assert Web3.is_checksum_address(owner_address)
 
     try:
         redis = RedisRepository().redis
@@ -800,7 +800,7 @@ def circles_onboarding_organization_signup_task(safe_address: str) -> None:
     :param safe_address: Address of the created safe
     """
 
-    assert Web3.isChecksumAddress(safe_address)
+    assert Web3.is_checksum_address(safe_address)
 
     # Additional funds for organization deployments (it should at least cover
     # one `trust` method call) next to the `organizationSignup` method
