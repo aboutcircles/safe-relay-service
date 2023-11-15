@@ -66,7 +66,7 @@ class FundingService:
         block_identifier="pending",
     ):
         if not gas_price:
-            gas_price = self.gas_station.get_gas_prices().standard
+            gas_price = self.gas_station.get_gas_prices().fast
 
         if self.max_eth_to_send and value > Web3.toWei(self.max_eth_to_send, "ether"):
             raise EtherLimitExceeded(
