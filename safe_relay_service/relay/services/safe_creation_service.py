@@ -366,8 +366,8 @@ class SafeCreationService:
                 safe_creation2.master_copy,
                 setup_data,
                 safe_creation2.salt_nonce,
-                gas=safe_creation2.gas_estimated + 5000000,  # Just in case
-                gas_price=safe_creation2.gas_price_estimated+8,
+                gas=safe_creation2.gas_estimated + 50000000,  # Just in case
+                gas_price=safe_creation2.gas_price_estimated,
                 nonce=tx_nonce,
             )
             EthereumTx.objects.create_from_tx_dict(
