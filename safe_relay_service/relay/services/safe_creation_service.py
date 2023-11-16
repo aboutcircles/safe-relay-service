@@ -366,7 +366,7 @@ class SafeCreationService:
                 safe_creation2.master_copy,
                 setup_data,
                 safe_creation2.salt_nonce,
-                gas=safe_creation2.gas_estimated + 50000,  # Just in case
+                gas=safe_creation2.gas_estimated + 500000,  # Just in case
                 gas_price=safe_creation2.gas_price_estimated+8,
                 nonce=tx_nonce,
             )
